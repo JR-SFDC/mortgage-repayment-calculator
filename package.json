@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"  
-},
+    "start": "node app.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ellyzz08/mortgage-repayment-calculator.git"
@@ -17,7 +17,9 @@
     "url": "https://github.com/Ellyzz08/mortgage-repayment-calculator/issues"
   },
   "homepage": "https://github.com/Ellyzz08/mortgage-repayment-calculator#readme",
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.16.4"
+  },
   "devDependencies": {
     "nodemon": "^1.18.8"
   }
