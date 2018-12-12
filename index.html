@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <title>Mortgage Repayment Calculator</title>
+    <style>
+        body { 
+            background:white;
+        }
+
+        .amount {
+            color: #00B6FE;
+        }
+    </style>
+</head>
+
+<body class="p-5">
+    <div class="container">
+        <div class="mb-5">
+            <img width="125px" src="/images/ezibankIcon.png"/>
+        </div>
+        <h2 class="p-3">Try our Home Loan Repayment Calculator</h2>
+        <div class="container p-3">
+            <form>
+                <div class="form-row">
+                    <div class="col-md-4 mb-3 ">
+                        <label for="amountInput">I would like to borrow:</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="amountInputPrepend">$</span>
+                            </div>
+                            <input type="number" class="form-control" id="amountInput" value="300000"
+                                aria-describedby="amountInputPrepend" />
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="yearsInput">Over a loan term of:</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="yearsInput" value="30" aria-describedby="yearsInputAppend" />
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="yearsInputAppend">Years</span>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="repaymentTypeSelection">With a repayment type of:</label>
+                        <select id="repaymentTypeSelection" class="form-control">
+                            <option value="0" >Principle & Interest</option>
+                            <option value="1" >1 years interest only</option>
+                            <option value="2" >2 years interest only</option>
+                            <option value="3" >3 years interest only</option>
+                            <option value="4" >4 years interest only</option>
+                            <option value="5" selected>5 years interest only</option>
+                        </select>
+                    </div>
+                </div>
+
+            <div class="form-row" style="align-items: flex-end;">
+                <div class="col-md-4 mb-3">
+                    <label for="interestInput">With an interest rate of:</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="interestInput" value="4.99" step="0.01" aria-describedby="interestInputAppend" />
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="interestInputAppend">% p.a.</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3" >
+                    <label for="frequencyButtonGroup">With a repayment frequency of:</label>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="frequencyButtonGroup">
+                            <button type="button" class="btn btn-default border" id="weekly" value="0.25">Weekly</button>
+                            <button type="button" class="btn btn-default border" id="fornightly" value="0.5">Fornightly</button>
+                            <button type="button" class="btn btn-primary border" id="monthly" value="1">Monthly</button>
+                        </div>
+                </div>
+            </div>
+            </form>
+
+            <div class="mt-5 row justify-content-start">
+                <div class="col-6" id="initialPaymentDiv">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <img width="100px" src="/images/CalculatorIconBlue.png" />
+                                    </div>
+                                    <div class="col-8">
+                                        <div>
+                                            <h5 class="card-title">Initial Interest only repayments</h5>
+                                            <h2 class="amount" id="initalPaymentResult"></h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-4">
+                                    <img width="100px" src="/images/HouseIconBlue.png" />
+                                </div>
+                                <div class="col-8">
+                                    <div>
+                                        <h5 class="card-title">Principal & Interest repayments</h5>
+                                        <h2 class="amount" id="principalInterestResult"></h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        $(document).ready(function(){
+            calc();
+        });
+        $('#frequencyButtonGroup .btn').on('click', function(event) {
+
+             $(this) // get the button being clicked 
+            .addClass('btn-primary') // add the `btn-primary` class
+            .siblings('.btn-primary') // get all sibling buttons which may already be selected
+            .removeClass('btn-primary'); // remove the selected class
+            
+            calc();
+            
+        });
+
+        $('.form-control').change(function(){
+           calc();
+        });
+
+        function calc() {
+            console.log('--re evaluate--');
+            var loanAmount = $('#amountInput').val();
+            var years = $('#yearsInput').val();
+            var repaymentType = $('#repaymentTypeSelection').val();
+            var interest = $('#interestInput').val();
+            var repaymentFq = $('button.btn-primary').val();
+
+            console.log('amount:' + loanAmount);
+            console.log('yearsInput:' + years);
+            console.log('repaymentTypeSelection:' + repaymentType);
+            console.log('interestInput:' + interest);
+            console.log('repaymentFrequency:'+ repaymentFq);
+
+            var M; //monthly mortgage payment
+            var P = loanAmount; //principle / initial amount borrowed
+            var I = interest / 100 / 12; //monthly interest rate
+            var N = years * 12; //number of payments months
+
+            var iRepayment;
+            var pIRepayment;
+
+             //monthly mortgage payment
+             M = monthlyPayment(P, N, I);
+
+            if(repaymentType == 0){
+                $('#initialPaymentDiv').hide();
+                $('#principalInterestResult').html('$'+ M.toFixed(2) * repaymentFq);
+                //console.log(M.toFixed(2));
+            }
+            else {
+                $('#initialPaymentDiv').show();
+                iRepayment = loanAmount * interest / 100 / 12 * repaymentFq;
+                pIRepayment = monthlyPayment(loanAmount,(years - repaymentType)*12,I) * repaymentFq;
+                $('#initalPaymentResult').html('$'+ iRepayment.toFixed(2));
+                $('#principalInterestResult').html('$'+ pIRepayment.toFixed(2));
+
+                // console.log(iRepayment);
+                // console.log(pIRepayment);
+            }
+            
+            //
+            // var initialPayment = M / repaymentFq;
+            // $('#initalPaymentResult').html('$'+ Math.ceil(initialPayment));
+
+           
+        }
+
+        function monthlyPayment(p, n, i) {
+            return p * i * (Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+        }
+
+    </script>    
+</body>
+
+</html>
